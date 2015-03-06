@@ -1,0 +1,16 @@
+README.txt
+libmozutils.dylib
+jssubloader/
+run-mozilla.sh
+defaults/preferences/services-sync.js
+defaults/preferences/healthreport-prefs.js
+components/dom_sms.xpt
+components/dom_webspeech.xpt
+libnspr4.dylib
+libplds4.dylib
+libplc4.dylib
+libssl3.dylib
+libsmime3.dylib
+libnssutil3.dylib
+libmozsqlite3.dylib
+libxpcom.dylib
