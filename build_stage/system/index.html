@@ -18,34 +18,18 @@
     <script defer src="js/gaia-helpers/wakelock/wake_lock_manager.js"></script>
     <script defer src="js/gaia-helpers/wakelock/cpu_manager.js"></script>
 
-    <!-- The camera API can be quite verbose. We have an easier one. -->
-    <script defer src="js/api/camera.js"></script>
-    <script defer src="js/api/gpio.js"></script>
-
-    <!-- Your own scripts go here -->
-    <script defer src="js/examples/security_cam.js"></script>
-    <script defer src="js/examples/doorbell.js"></script>
-    <script defer src="js/examples/bluetooth.js"></script>
-    <script defer src="js/examples/tracker.js"></script>
-    <script defer src="js/examples/motion.js"></script>
-    
-    <script defer src="js/fxos-web-server.js"></script>
-    <script type="application/javascript;version=1.7" defer src="js/my-app.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/api/gpio.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/simpleStorage.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/fxos-web-server.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/QRCode.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/Common.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/Config.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/URI.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/WashingApi.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/WashingProgram.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/WashingProgramHistory.js"></script>
+    <script type="application/javascript;version=1.7" defer src="js/app.js"></script>
   </head>
-
   <body>
-    <!-- The logo -->
-    <pre>     ____.              ________    _________
-    |    |____    ____  \_____  \  /   _____/
-    |    \__  \  /    \  /   |   \ \_____  \
-/\__|    |/ __ \|   |  \/    |    \/        \
-\________(____  /___|  /\_______  /_______  /
-              \/     \/         \/        \/</pre>
-    <pre class="status">Booting up</pre>
-    <p>
-      <button class="blink">Toggle blinking</button>
-      <input type="range" id="speed" min="30" max="1000" value="500">
-      <label for="speed">500</label>
-    </p>
   </body>
 </html>
