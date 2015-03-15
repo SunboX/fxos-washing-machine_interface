@@ -1,19 +1,21 @@
 wm.WashingProgramHistory = (function () {
 
-    var programUuids = [];
+    'use strict';
 
-    var loadProgramUuids = function () {
-        var storedEntity = simpleStorage.get('wm.ProgramUuids');
+    let programUuids = [];
+
+    let loadProgramUuids = function () {
+        let storedEntity = simpleStorage.get('wm.ProgramUuids');
         if (storedEntity) {
             programUuids = storedEntity;
         }
     }
 
-    var saveProgramUuids = function () {
+    let saveProgramUuids = function () {
         simpleStorage.set('wm.ProgramUuids', programUuids);
     };
 
-    var getProgramByIndex = function (index) {
+    let getProgramByIndex = function (index) {
         if (index < 0) {
             index += programUuids.length;
         }
@@ -23,21 +25,21 @@ wm.WashingProgramHistory = (function () {
         return null;
     };
 
-    var getProgramByUuid = function (uuid) {
-        var storedEntity = simpleStorage.get('wm.Program.' + uuid);
+    let getProgramByUuid = function (uuid) {
+        let storedEntity = simpleStorage.get('wm.Program.' + uuid);
         if (storedEntity) {
             return storedEntity;
         }
         return null;
     };
 
-    var addProgram = function (program) {
+    let addProgram = function (program) {
         programUuids.push(program.programUuid);
         saveProgramUuids();
         simpleStorage.set('wm.Program.' + program.programUuid, program);
     };
 
-    var init = function () {
+    let init = function () {
         loadProgramUuids();
     };
 

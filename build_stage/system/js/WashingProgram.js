@@ -1,29 +1,31 @@
 wm.WashingProgram = (function () {
+
+    'use strict';
     
-    var programData = {
-        WATER_HARDNESS: '',
-        WASHING_POWDER: '',
-        FABRIC_CONDITIONER: '',
-        LOAD_WEIGHT: '',
-        WATER_PRESSURE: '',
-        LOAD_COLOR: '',
-        LOAD_TYPE: ''
+    let programData = {
+        WATER_HARDNESS: 'WATER_HARDNESS',
+        WASHING_POWDER: 'WASHING_POWDER',
+        FABRIC_CONDITIONER: 'FABRIC_CONDITIONER',
+        LOAD_WEIGHT: 'LOAD_WEIGHT',
+        WATER_PRESSURE: 'WATER_PRESSURE',
+        LOAD_COLOR: 'LOAD_COLOR',
+        LOAD_TYPE: 'LOAD_TYPE'
     };
 
-    var loadTypes = {
+    let loadType = {
         HEAVY: 'HEAVY',
         NORMAL: 'NORMAL',
         DELICATES: 'DELICATES',
         WOOL: 'WOOL'
     };
 
-    var loadColor = {
+    let loadColor = {
         WHITE: 'WHITE',
         COLORED: 'COLORED',
         BLACK: 'BLACK'
     };
 
-    var states = {
+    let state = {
         IDLE: 'IDLE',
         COLLECTING_DATA: 'COLLECTING_DATA',
         READY: 'READY',
@@ -31,7 +33,7 @@ wm.WashingProgram = (function () {
         FINISHED: 'FINISHED'
     };
 
-    var running = false,
+    let running = false,
         finished = false,
         settings = {
             programUuid: null,
@@ -45,34 +47,34 @@ wm.WashingProgram = (function () {
         },
         currentProgram = [];
 
-    var generateUuid = function () {
+    let generateUuid = function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
+            let r = Math.random() * 16 | 0,
                 v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
 
-    var fetchWaterHardness = function () {
-        var location = wm.Settings.getGeoLocation();
+    let fetchWaterHardness = function () {
+        let location = wm.Settings.getGeoLocation();
 
-        var url = wm.URI.parse(wm.Config.waterApiUrl);
-        var query = {
+        let url = wm.URI.parse(wm.Config.waterApiUrl);
+        let query = {
             latitude: location.latitude,
             longitude: location.longitude
         };
         url.parts.query = wm.URI.serialize(query);
 
-        var request = new XMLHttpRequest();
+        let request = new XMLHttpRequest();
         request.onload = function () {
-            var response = JSON.parse(this.responseText);
+            let response = JSON.parse(this.responseText);
             settings.waterHardness = response.water.hardness;
         };
         request.open('get', url.toString(), true);
         request.send();
     };
 
-    var isIdle = function () {
+    let isIdle = function () {
         return settings.programUuid === null &&
             settings.waterHardness === null &&
             settings.washingPowder === null &&
@@ -83,7 +85,7 @@ wm.WashingProgram = (function () {
             settings.loadType === null;
     };
 
-    var isReadyToRun = function () {
+    let isReadyToRun = function () {
         return settings.programUuid !== null &&
             settings.waterHardness !== null &&
             settings.washingPowder !== null &&
@@ -94,7 +96,7 @@ wm.WashingProgram = (function () {
             settings.loadType !== null;
     };
 
-    var setLoadType = function (programUuid, loadType) {
+    let setLoadType = function (programUuid, loadType) {
         if (programUuid === settings.programUuid) {
             // TODO: validate loadType
             settings.loadType = loadType;
@@ -104,7 +106,7 @@ wm.WashingProgram = (function () {
         return false;
     };
 
-    var setLoadColor = function (programUuid, loadColor) {
+    let setLoadColor = function (programUuid, loadColor) {
         if (programUuid === settings.programUuid) {
             // TODO: validate loadColor
             settings.loadColor = loadColor;
@@ -114,24 +116,24 @@ wm.WashingProgram = (function () {
         return false;
     };
 
-    var getState = function () {
+    let getState = function () {
         if (running) {
-            return states.RUNNING;
+            return state.RUNNING;
         }
         if (finished) {
-            return states.FINISHED;
+            return state.FINISHED;
         }
         if (isIdle()) {
-            return states.IDLE;
+            return state.IDLE;
         }
         if (isReadyToRun()) {
-            return states.READY;
+            return state.READY;
         }
-        return states.COLLECTING_DATA;
+        return state.COLLECTING_DATA;
     };
 
-    var getMissingData = function () {
-        var missingData = [];
+    let getMissingData = function () {
+        let missingData = [];
         if (settings.waterHardness === null) {
             missingData.push(programData.WATER_HARDNESS);
         }
@@ -156,9 +158,9 @@ wm.WashingProgram = (function () {
         return missingData;
     };
 
-    var getProgramUuid = function (type) {
+    let getProgramUuid = function (type) {
         if (type === 'last') {
-            var lastProgram = wm.WashingProgramHistory.getProgramByIndex(-1);
+            let lastProgram = wm.WashingProgramHistory.getProgramByIndex(-1);
             if (lastProgram) {
                 return lastProgram.programUuid;
             }
@@ -173,10 +175,10 @@ wm.WashingProgram = (function () {
     return {
         setLoadType: setLoadType,
         setLoadColor: setLoadColor,
-        loadTypes: loadTypes,
+        loadType: loadType,
         loadColor: loadColor,
         getState: getState,
-        states: states,
+        state: state,
         getMissingData: getMissingData,
         getProgramUuid: getProgramUuid
     };

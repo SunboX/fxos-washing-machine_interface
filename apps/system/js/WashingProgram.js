@@ -3,13 +3,13 @@ wm.WashingProgram = (function () {
     'use strict';
     
     let programData = {
-        WATER_HARDNESS: '',
-        WASHING_POWDER: '',
-        FABRIC_CONDITIONER: '',
-        LOAD_WEIGHT: '',
-        WATER_PRESSURE: '',
-        LOAD_COLOR: '',
-        LOAD_TYPE: ''
+        WATER_HARDNESS: 'WATER_HARDNESS',
+        WASHING_POWDER: 'WASHING_POWDER',
+        FABRIC_CONDITIONER: 'FABRIC_CONDITIONER',
+        LOAD_WEIGHT: 'LOAD_WEIGHT',
+        WATER_PRESSURE: 'WATER_PRESSURE',
+        LOAD_COLOR: 'LOAD_COLOR',
+        LOAD_TYPE: 'LOAD_TYPE'
     };
 
     let loadType = {

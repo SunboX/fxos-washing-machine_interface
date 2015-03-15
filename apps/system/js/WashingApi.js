@@ -30,7 +30,9 @@ wm.WashingApi = (function () {
                         let request = evt.request,
                             response = evt.response,
                             date = new Date().toUTCString(),
-                            body = '';
+                            body = '',
+                            type,
+                            programUuid;
 
                         // default to JSON
                         response.headers['Content-Type'] = 'application/json; charset=utf-8';
@@ -50,18 +52,22 @@ wm.WashingApi = (function () {
                             break;
 
                         case '/info/state':
+                            type = 'current'; // type = current, last
+                            if ('type' in request.params) {
+                                type = request.params.type;
+                            }
                             let responseObj = {
                                 state: wm.WashingProgram.getState(),
                                 programUuid: wm.WashingProgram.getProgramUuid(type) 
                             };
-                            if (responseObj.state === wm.WashingProgram.states.COLLECTING_DATA) {
+                            if (responseObj.state === wm.WashingProgram.state.COLLECTING_DATA) {
                                 responseObj.missingData = wm.WashingProgram.getMissingData()
                             }
                             body = JSON.stringify(responseObj);
                             break;
 
                         case '/info/program-uuid':
-                            let type = 'current'; // type = current, last
+                            ltype = 'current'; // type = current, last
                             if ('type' in request.params) {
                                 type = request.params.type;
                             }
@@ -130,22 +136,32 @@ wm.WashingApi = (function () {
 
                         case '/info/type-of-load':
                             if ('programUuid' in request.params && 'type' in request.params) {
-                                let programUuid = request.params.programUuid,
-                                    type = request.params.type;
+                                programUuid = request.params.programUuid;
+                                type = request.params.type;
 
                                 body = JSON.stringify({
                                     success: wm.WashingProgram.setLoadType(programUuid, type)
+                                });
+                            } else {
+                                body = JSON.stringify({
+                                    success: false,
+                                    message: 'programUuid or type missing'
                                 });
                             }
                             break;
 
                         case '/info/color-of-load':
                             if ('programUuid' in request.params && 'color' in request.params) {
-                                let programUuid = request.params.programUuid,
-                                    type = request.params.color;
+                                programUuid = request.params.programUuid;
+                                let color = request.params.color;
 
                                 body = JSON.stringify({
                                     success: wm.WashingProgram.setLoadColor(programUuid, color)
+                                });
+                            } else {
+                                body = JSON.stringify({
+                                    success: false,
+                                    message: 'programUuid or color missing'
                                 });
                             }
                             break;
