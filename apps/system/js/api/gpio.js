@@ -81,9 +81,9 @@ GpioPin.prototype.writeDigital = function (value) {
         .then(() => this.fd.setPosition(0, 'POS_START'))
         .then(() => this.fd.write(value, 'utf-8'))
         .then(() => {
-            setTimeout(function () {
+            setTimeout(() => {
                 this.fd.write(value, 'utf-8');
-            }, 20);
+            }, 50);
         })
         .catch(err => {
             this._lastValue = null;

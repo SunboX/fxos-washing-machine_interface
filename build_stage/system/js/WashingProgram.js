@@ -171,6 +171,20 @@ wm.WashingProgram = (function () {
         return settings.programUuid;
     };
 
+    let stop = function () {
+        settings = {
+            programUuid: null,
+            waterHardness: null,
+            washingPowder: null,
+            fabricConditioner: null,
+            loadWeight: null,
+            waterPressure: null,
+            loadColor: null,
+            loadType: null
+        };
+        return true;
+    };
+
     // public
     return {
         setLoadType: setLoadType,
@@ -180,7 +194,8 @@ wm.WashingProgram = (function () {
         getState: getState,
         state: state,
         getMissingData: getMissingData,
-        getProgramUuid: getProgramUuid
+        getProgramUuid: getProgramUuid,
+        stop: stop
     };
 
 })();

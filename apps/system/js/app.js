@@ -1,5 +1,7 @@
 console.log('app');
 
+//screen.mozLockOrientation(['landscape']);
+
 window.addEventListener('ready', () => {
 
     'use strict';
@@ -12,6 +14,7 @@ window.addEventListener('ready', () => {
         let [pin2, pin3] = pins;
 
         // Example: Blink two LED's every 500 ms
+        /*
         let blinkTimeout;
         let blinkValue = 0;
 
@@ -24,9 +27,16 @@ window.addEventListener('ready', () => {
             blinkTimeout = setTimeout(blink, 500);
         }
         blink();
+        */
 
         wm.WashingProgramHistory.init();
         wm.WashingApi.init();
+
+        // Ready
+        pin2.writeDigital(1);
+        setTimeout(() => {
+            pin2.writeDigital(1);
+        }, 50);
 
     });
 });

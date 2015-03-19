@@ -41,14 +41,17 @@ wm.WashingApi = (function () {
                         // TODO: better handling for invalid requests with more clear exception messages
                         body = '{"message":"invalid request"}';
                         
-                        console.log(request.path);
-                        console.log(request.params);
-
                         switch (request.path) {
                         case '':
                         case '/':
                             response.headers['Content-Type'] = 'text/html; charset=utf-8';
                             body = 'Welcome to the Washing Machine API';
+                            break;
+                                
+                        case '/stop':
+                            body = JSON.stringify({
+                                success: wm.WashingProgram.stop()
+                            });
                             break;
 
                         case '/info/state':
@@ -67,7 +70,7 @@ wm.WashingApi = (function () {
                             break;
 
                         case '/info/program-uuid':
-                            ltype = 'current'; // type = current, last
+                            type = 'current'; // type = current, last
                             if ('type' in request.params) {
                                 type = request.params.type;
                             }
