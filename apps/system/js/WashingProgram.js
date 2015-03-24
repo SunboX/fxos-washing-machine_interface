@@ -1,7 +1,7 @@
 wm.WashingProgram = (function () {
 
     'use strict';
-    
+
     let programData = {
         WATER_HARDNESS: 'WATER_HARDNESS',
         WASHING_POWDER: 'WASHING_POWDER',
@@ -33,6 +33,16 @@ wm.WashingProgram = (function () {
         FINISHED: 'FINISHED'
     };
 
+    let requiredData = [
+        programData.WATER_HARDNESS,
+        programData.WASHING_POWDER,
+        programData.FABRIC_CONDITIONER,
+        programData.LOAD_WEIGHT,
+        programData.WATER_PRESSURE,
+        programData.LOAD_COLOR,
+        programData.LOAD_TYPE
+    ];
+
     let running = false,
         finished = false,
         settings = {
@@ -45,7 +55,8 @@ wm.WashingProgram = (function () {
             loadColor: null,
             loadType: null
         },
-        currentProgram = [];
+        currentProgram = [],
+        events = {};
 
     let generateUuid = function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -54,26 +65,7 @@ wm.WashingProgram = (function () {
             return v.toString(16);
         });
     };
-
-    let fetchWaterHardness = function () {
-        let location = wm.Settings.getGeoLocation();
-
-        let url = wm.URI.parse(wm.Config.waterApiUrl);
-        let query = {
-            latitude: location.latitude,
-            longitude: location.longitude
-        };
-        url.parts.query = wm.URI.serialize(query);
-
-        let request = new XMLHttpRequest();
-        request.onload = function () {
-            let response = JSON.parse(this.responseText);
-            settings.waterHardness = response.water.hardness;
-        };
-        request.open('get', url.toString(), true);
-        request.send();
-    };
-
+    
     let isIdle = function () {
         return settings.programUuid === null &&
             settings.waterHardness === null &&
@@ -96,10 +88,56 @@ wm.WashingProgram = (function () {
             settings.loadType !== null;
     };
 
+    let setWaterHardness = function (programUuid, waterHardness) {
+        if (programUuid === settings.programUuid) {
+            // TODO: validate waterHardness
+            settings.waterHardness = waterHardness;
+            dispatchEvent('data-changed', {
+                requiredData: requiredData,
+                missingData: getMissingData()
+            });
+            return true;
+        }
+        // TODO: throw more clear exception if programUuid is wrong
+        return false;
+    };
+
+    let setWashingPowder = function (programUuid, washingPowder) {
+        if (programUuid === settings.programUuid) {
+            // TODO: validate waterHardness
+            settings.washingPowder = washingPowder;
+            dispatchEvent('data-changed', {
+                requiredData: requiredData,
+                missingData: getMissingData()
+            });
+            return true;
+        }
+        // TODO: throw more clear exception if programUuid is wrong
+        return false;
+    };
+
+    let setFabricConditioner = function (programUuid, fabricConditioner) {
+        if (programUuid === settings.programUuid) {
+            // TODO: validate waterHardness
+            settings.fabricConditioner = fabricConditioner;
+            dispatchEvent('data-changed', {
+                requiredData: requiredData,
+                missingData: getMissingData()
+            });
+            return true;
+        }
+        // TODO: throw more clear exception if programUuid is wrong
+        return false;
+    };
+
     let setLoadType = function (programUuid, loadType) {
         if (programUuid === settings.programUuid) {
             // TODO: validate loadType
             settings.loadType = loadType;
+            dispatchEvent('data-changed', {
+                requiredData: requiredData,
+                missingData: getMissingData()
+            });
             return true;
         }
         // TODO: throw more clear exception if programUuid is wrong
@@ -110,6 +148,10 @@ wm.WashingProgram = (function () {
         if (programUuid === settings.programUuid) {
             // TODO: validate loadColor
             settings.loadColor = loadColor;
+            dispatchEvent('data-changed', {
+                requiredData: requiredData,
+                missingData: getMissingData()
+            });
             return true;
         }
         // TODO: throw more clear exception if programUuid is wrong
@@ -165,7 +207,7 @@ wm.WashingProgram = (function () {
                 return lastProgram.programUuid;
             }
         }
-        if (settings.programUuid === null) {
+        if (settings.programUuid == null) {
             settings.programUuid = generateUuid();
         }
         return settings.programUuid;
@@ -182,20 +224,48 @@ wm.WashingProgram = (function () {
             loadColor: null,
             loadType: null
         };
+        dispatchEvent('data-changed', {
+            requiredData: requiredData,
+            missingData: getMissingData()
+        });
         return true;
+    };
+
+    let init = function () {
+        registerEvent('data-changed');
+    };
+
+    let registerEvent = function (eventName) {
+        events[eventName] = new wm.Event(eventName);
+    };
+
+    let dispatchEvent = function (eventName, eventArgs) {
+        events[eventName].callbacks.forEach(function (callback) {
+            callback(eventArgs);
+        });
+    };
+
+    let addEventListener = function (eventName, callback) {
+        events[eventName].registerCallback(callback);
     };
 
     // public
     return {
+        init: init,
+        setWaterHardness: setWaterHardness,
+        setWashingPowder: setWashingPowder,
+        setFabricConditioner: setFabricConditioner,
         setLoadType: setLoadType,
         setLoadColor: setLoadColor,
         loadType: loadType,
         loadColor: loadColor,
         getState: getState,
         state: state,
+        getRequiredData: requiredData,
         getMissingData: getMissingData,
         getProgramUuid: getProgramUuid,
-        stop: stop
+        stop: stop,
+        addEventListener: addEventListener
     };
 
 })();

@@ -30,8 +30,26 @@ window.addEventListener('ready', () => {
         */
 
         wm.WashingProgramHistory.init();
+        wm.WashingProgram.init();
         wm.WashingApi.init();
-
+        
+        let statusText = document.getElementById('status-text'),
+            durationCircle = document.getElementById('duration-circle'),
+            duration = document.getElementById('duration');
+        
+        wm.WashingProgram.addEventListener('data-changed', function (e) {
+            if (e.requiredData.length !== e.missingData.length) {
+                statusText.textContent = 'collecting data';
+                durationCircle.style.strokeDashoffset = (440 / e.requiredData.length) * e.missingData.length;
+            } else if (e.missingData.length > 0) {
+                statusText.textContent = 'idle';
+                durationCircle.style.strokeDashoffset = 440;
+            } else {
+                statusText.hidden = true;
+                duration.hidden = false;
+            }   
+        });
+        
         // Ready
         pin2.writeDigital(1);
         setTimeout(() => {

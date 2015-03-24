@@ -133,8 +133,52 @@ wm.WashingApi = (function () {
                             // programUuid
                             break;
 
+                        case '/info/washing-powder':
+                            if ('programUuid' in request.params && 'washingPowder' in request.params) {
+                                programUuid = request.params.programUuid;
+                                let washingPowder = request.params.washingPowder;
+
+                                body = JSON.stringify({
+                                    success: wm.WashingProgram.setWashingPowder(programUuid, washingPowder)
+                                });
+                            } else {
+                                body = JSON.stringify({
+                                    success: false,
+                                    message: 'programUuid or waterHardness missing'
+                                });
+                            }
+                            break;
+
+                        case '/info/fabric-conditioner':
+                            if ('programUuid' in request.params && 'fabricConditioner' in request.params) {
+                                programUuid = request.params.programUuid;
+                                let fabricConditioner = request.params.fabricConditioner;
+
+                                body = JSON.stringify({
+                                    success: wm.WashingProgram.setFabricConditioner(programUuid, fabricConditioner)
+                                });
+                            } else {
+                                body = JSON.stringify({
+                                    success: false,
+                                    message: 'programUuid or waterHardness missing'
+                                });
+                            }
+                            break;
+
                         case '/info/water-hardness':
-                            // programUuid
+                            if ('programUuid' in request.params && 'waterHardness' in request.params) {
+                                programUuid = request.params.programUuid;
+                                let waterHardness = request.params.waterHardness;
+
+                                body = JSON.stringify({
+                                    success: wm.WashingProgram.setWaterHardness(programUuid, waterHardness)
+                                });
+                            } else {
+                                body = JSON.stringify({
+                                    success: false,
+                                    message: 'programUuid or waterHardness missing'
+                                });
+                            }
                             break;
 
                         case '/info/type-of-load':
