@@ -4,7 +4,8 @@ wm.WashingApi = (function () {
 
     let wifiManager = navigator.mozWifiManager,
         lastIp,
-        httpServer;
+        httpServer,
+        events = {};
 
     let lengthInUtf8Bytes = function (str) {
         // Matches only the 10.. bytes that are non-initial characters in a multi-byte sequence.
@@ -13,6 +14,9 @@ wm.WashingApi = (function () {
     };
 
     let init = function () {
+
+        registerEvent('initialized');
+
         if ('onconnectioninfoupdate' in wifiManager) {
             wifiManager.onconnectioninfoupdate = function (e) {
                 if (e.ipAddress && lastIp !== e.ipAddress) {
@@ -40,28 +44,34 @@ wm.WashingApi = (function () {
                         // default to error message
                         // TODO: better handling for invalid requests with more clear exception messages
                         body = '{"message":"invalid request"}';
-                        
+
                         switch (request.path) {
                         case '':
                         case '/':
                             response.headers['Content-Type'] = 'text/html; charset=utf-8';
                             body = 'Welcome to the Washing Machine API';
                             break;
-                                
+
+                        case '/start':
+                            body = JSON.stringify({
+                                success: wm.WashingProgram.start()
+                            });
+                            break;
+
                         case '/stop':
                             body = JSON.stringify({
                                 success: wm.WashingProgram.stop()
                             });
                             break;
 
-                        case '/info/state':
+                        case '/data/state':
                             type = 'current'; // type = current, last
                             if ('type' in request.params) {
                                 type = request.params.type;
                             }
                             let responseObj = {
                                 state: wm.WashingProgram.getState(),
-                                programUuid: wm.WashingProgram.getProgramUuid(type) 
+                                programUuid: wm.WashingProgram.getProgramUuid(type)
                             };
                             if (responseObj.state === wm.WashingProgram.state.COLLECTING_DATA) {
                                 responseObj.missingData = wm.WashingProgram.getMissingData()
@@ -69,7 +79,7 @@ wm.WashingApi = (function () {
                             body = JSON.stringify(responseObj);
                             break;
 
-                        case '/info/program-uuid':
+                        case '/data/program-uuid':
                             type = 'current'; // type = current, last
                             if ('type' in request.params) {
                                 type = request.params.type;
@@ -79,64 +89,64 @@ wm.WashingApi = (function () {
                             });
                             break;
 
-                        case '/info/cycle-of-program':
+                        case '/data/cycle-of-program':
                             // programUuid
                             break;
 
-                        case '/info/washing-program':
+                        case '/data/washing-program':
                             // programUuid
                             break;
 
-                        case '/info/washing-powder-fill-level':
+                        case '/data/washing-powder-fill-level':
                             body = JSON.stringify({
                                 fillLevel: 0
                             });
                             break;
 
-                        case '/info/fabric-conditioner-fill-level':
+                        case '/data/fabric-conditioner-fill-level':
                             body = JSON.stringify({
                                 fillLevel: 0
                             });
                             break;
 
-                        case '/info/water-used':
+                        case '/data/water-used':
                             // programUuid
                             // overAll = true
                             break;
 
-                        case '/info/electricity-used':
+                        case '/data/electricity-used':
                             // programUuid
                             // overAll = true
                             break;
 
-                        case '/info/washing-powder-used':
+                        case '/data/washing-powder-used':
                             // programUuid
                             // overAll = true
                             break;
 
-                        case '/info/fabric-conditioner-used':
+                        case '/data/fabric-conditioner-used':
                             // programUuid
                             // overAll = true
                             break;
 
-                        case '/info/duration':
+                        case '/data/duration':
                             // programUuid
                             break;
 
-                        case '/info/total-operating-hours':
+                        case '/data/total-operating-hours':
                             body = JSON.stringify({
                                 operatingHours: 0
                             });
                             break;
 
-                        case '/info/load-weight':
+                        case '/data/load-weight':
                             // programUuid
                             break;
 
-                        case '/info/washing-powder':
-                            if ('programUuid' in request.params && 'washingPowder' in request.params) {
+                        case '/data/washing-powder':
+                            if ('programUuid' in request.params && 'washingPowder[type]' in request.params && 'washingPowder[dosis]' in request.params) {
                                 programUuid = request.params.programUuid;
-                                let washingPowder = request.params.washingPowder;
+                                let washingPowder = request.params['washingPowder[dosis]'];
 
                                 body = JSON.stringify({
                                     success: wm.WashingProgram.setWashingPowder(programUuid, washingPowder)
@@ -144,15 +154,15 @@ wm.WashingApi = (function () {
                             } else {
                                 body = JSON.stringify({
                                     success: false,
-                                    message: 'programUuid or waterHardness missing'
+                                    message: 'programUuid or washingPowder missing'
                                 });
                             }
                             break;
 
-                        case '/info/fabric-conditioner':
-                            if ('programUuid' in request.params && 'fabricConditioner' in request.params) {
+                        case '/data/fabric-conditioner':
+                            if ('programUuid' in request.params && 'fabricConditioner[dosis]' in request.params) {
                                 programUuid = request.params.programUuid;
-                                let fabricConditioner = request.params.fabricConditioner;
+                                let fabricConditioner = request.params['fabricConditioner[dosis]'];
 
                                 body = JSON.stringify({
                                     success: wm.WashingProgram.setFabricConditioner(programUuid, fabricConditioner)
@@ -160,12 +170,12 @@ wm.WashingApi = (function () {
                             } else {
                                 body = JSON.stringify({
                                     success: false,
-                                    message: 'programUuid or waterHardness missing'
+                                    message: 'programUuid or fabricConditioner missing'
                                 });
                             }
                             break;
 
-                        case '/info/water-hardness':
+                        case '/data/water-hardness':
                             if ('programUuid' in request.params && 'waterHardness' in request.params) {
                                 programUuid = request.params.programUuid;
                                 let waterHardness = request.params.waterHardness;
@@ -181,7 +191,7 @@ wm.WashingApi = (function () {
                             }
                             break;
 
-                        case '/info/type-of-load':
+                        case '/data/type-of-load':
                             if ('programUuid' in request.params && 'type' in request.params) {
                                 programUuid = request.params.programUuid;
                                 type = request.params.type;
@@ -197,7 +207,7 @@ wm.WashingApi = (function () {
                             }
                             break;
 
-                        case '/info/color-of-load':
+                        case '/data/color-of-load':
                             if ('programUuid' in request.params && 'color' in request.params) {
                                 programUuid = request.params.programUuid;
                                 let color = request.params.color;
@@ -213,39 +223,39 @@ wm.WashingApi = (function () {
                             }
                             break;
 
-                        case '/info/additional-settings':
+                        case '/data/additional-settings':
                             // programUuid
                             break;
 
-                        case '/info/temperature-used':
+                        case '/data/temperature-used':
                             // programUuid
                             break;
 
-                        case '/info/speed-used':
+                        case '/data/speed-used':
                             // programUuid
                             break;
 
-                        case '/info/ground-water-temperature':
+                        case '/data/ground-water-temperature':
                             // programUuid
                             break;
 
-                        case '/info/type-of-washing-powder':
+                        case '/data/type-of-washing-powder':
                             // programUuid
                             break;
 
-                        case '/info/type-of-fabric-conditioner':
+                        case '/data/type-of-fabric-conditioner':
                             // get / set
                             break;
 
-                        case '/info/type-of-washing-powder-used':
+                        case '/data/type-of-washing-powder-used':
                             // get / set
                             break;
 
-                        case '/info/type-of-fabric-conditioner-used':
+                        case '/data/type-of-fabric-conditioner-used':
                             // programUuid
                             break;
                         }
-                        
+
                         response.headers['Access-Control-Allow-Origin'] = '*';
                         response.headers['Last-Modified'] = date;
                         response.headers['Pragma'] = 'public';
@@ -260,6 +270,10 @@ wm.WashingApi = (function () {
 
                     console.log('HTTP Server running at: http://' + e.ipAddress + ':' + httpServer.port + '/');
 
+                    dispatchEvent('initialized', {
+                        ipAddress: e.ipAddress
+                    });
+
                     window.addEventListener('beforeunload', function () {
                         httpServer.stop();
                     });
@@ -269,8 +283,23 @@ wm.WashingApi = (function () {
         }
     };
 
+    let registerEvent = function (eventName) {
+        events[eventName] = new wm.Event(eventName);
+    };
+
+    let dispatchEvent = function (eventName, eventArgs) {
+        events[eventName].callbacks.forEach(function (callback) {
+            callback(eventArgs);
+        });
+    };
+
+    let addEventListener = function (eventName, callback) {
+        events[eventName].registerCallback(callback);
+    };
+
     return {
-        init: init
+        init: init,
+        addEventListener: addEventListener
     };
 
 })();

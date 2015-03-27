@@ -33,12 +33,13 @@ wm.WashingProgram = (function () {
         FINISHED: 'FINISHED'
     };
 
+    // ignore water pressure & load weight by now
     let requiredData = [
         programData.WATER_HARDNESS,
         programData.WASHING_POWDER,
         programData.FABRIC_CONDITIONER,
-        programData.LOAD_WEIGHT,
-        programData.WATER_PRESSURE,
+        //programData.LOAD_WEIGHT,
+        //programData.WATER_PRESSURE,
         programData.LOAD_COLOR,
         programData.LOAD_TYPE
     ];
@@ -50,8 +51,8 @@ wm.WashingProgram = (function () {
             waterHardness: null,
             washingPowder: null,
             fabricConditioner: null,
-            loadWeight: null,
-            waterPressure: null,
+            //loadWeight: null,
+            //waterPressure: null,
             loadColor: null,
             loadType: null
         },
@@ -65,14 +66,14 @@ wm.WashingProgram = (function () {
             return v.toString(16);
         });
     };
-    
+
     let isIdle = function () {
         return settings.programUuid === null &&
             settings.waterHardness === null &&
             settings.washingPowder === null &&
             settings.fabricConditioner === null &&
-            settings.loadWeight === null &&
-            settings.waterPressure === null &&
+            //settings.loadWeight === null &&
+            //settings.waterPressure === null &&
             settings.loadColor === null &&
             settings.loadType === null;
     };
@@ -82,8 +83,8 @@ wm.WashingProgram = (function () {
             settings.waterHardness !== null &&
             settings.washingPowder !== null &&
             settings.fabricConditioner !== null &&
-            settings.loadWeight !== null &&
-            settings.waterPressure !== null &&
+            //settings.loadWeight !== null &&
+            //settings.waterPressure !== null &&
             settings.loadColor !== null &&
             settings.loadType !== null;
     };
@@ -185,12 +186,12 @@ wm.WashingProgram = (function () {
         if (settings.fabricConditioner === null) {
             missingData.push(programData.FABRIC_CONDITIONER);
         }
-        if (settings.loadWeight === null) {
-            missingData.push(programData.LOAD_WEIGHT);
-        }
-        if (settings.waterPressure === null) {
-            missingData.push(programData.WATER_PRESSURE);
-        }
+        //if (settings.loadWeight === null) {
+        //    missingData.push(programData.LOAD_WEIGHT);
+        //}
+        //if (settings.waterPressure === null) {
+        //    missingData.push(programData.WATER_PRESSURE);
+        //}
         if (settings.loadColor === null) {
             missingData.push(programData.LOAD_COLOR);
         }
@@ -212,6 +213,26 @@ wm.WashingProgram = (function () {
         }
         return settings.programUuid;
     };
+    
+    let minutesLeft = 120;
+
+    let start = function () {
+        minutesLeft = 120;
+        let timerInterval = setInterval(() => {
+            if (minutesLeft > 0) {
+                minutesLeft--;
+                dispatchEvent('timer-tick', {
+                    minutesLeft: minutesLeft
+                });
+            } else {
+                clearInterval(timerInterval);
+            }
+        }, 60000);
+        dispatchEvent('timer-tick', {
+            minutesLeft: minutesLeft
+        });
+        return true;
+    };
 
     let stop = function () {
         settings = {
@@ -219,8 +240,8 @@ wm.WashingProgram = (function () {
             waterHardness: null,
             washingPowder: null,
             fabricConditioner: null,
-            loadWeight: null,
-            waterPressure: null,
+            //loadWeight: null,
+            //waterPressure: null,
             loadColor: null,
             loadType: null
         };
@@ -233,6 +254,7 @@ wm.WashingProgram = (function () {
 
     let init = function () {
         registerEvent('data-changed');
+        registerEvent('timer-tick');
     };
 
     let registerEvent = function (eventName) {
@@ -252,6 +274,8 @@ wm.WashingProgram = (function () {
     // public
     return {
         init: init,
+        start: start,
+        stop: stop,
         setWaterHardness: setWaterHardness,
         setWashingPowder: setWashingPowder,
         setFabricConditioner: setFabricConditioner,
@@ -264,7 +288,6 @@ wm.WashingProgram = (function () {
         getRequiredData: requiredData,
         getMissingData: getMissingData,
         getProgramUuid: getProgramUuid,
-        stop: stop,
         addEventListener: addEventListener
     };
 
