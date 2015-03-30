@@ -228,6 +228,7 @@ wm.WashingProgram = (function () {
                 clearInterval(timerInterval);
             }
         }, 60000);
+        dispatchEvent('start');
         dispatchEvent('timer-tick', {
             minutesLeft: minutesLeft
         });
@@ -235,6 +236,7 @@ wm.WashingProgram = (function () {
     };
 
     let stop = function () {
+        minutesLeft = 0;
         settings = {
             programUuid: null,
             waterHardness: null,
@@ -245,6 +247,7 @@ wm.WashingProgram = (function () {
             loadColor: null,
             loadType: null
         };
+        dispatchEvent('stop');
         dispatchEvent('data-changed', {
             requiredData: requiredData,
             missingData: getMissingData()
@@ -254,6 +257,8 @@ wm.WashingProgram = (function () {
 
     let init = function () {
         registerEvent('data-changed');
+        registerEvent('start');
+        registerEvent('stop');
         registerEvent('timer-tick');
     };
 

@@ -1,7 +1,7 @@
 {
   "wifi": {
     "enabled": true,
-    "network": "blacky_nomap",
-    "password": "xxx"
+    "network": "washingmachine",
+    "password": "washingmachine"
   }
 }

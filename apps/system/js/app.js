@@ -1,5 +1,3 @@
-console.log('app');
-
 //screen.mozLockOrientation(['landscape']);
 
 window.addEventListener('ready', () => {
@@ -16,29 +14,16 @@ window.addEventListener('ready', () => {
         pin2.writeDigital(0);
         pin3.writeDigital(0);
 
-        // Example: Blink two LED's every 500 ms
-        /*
-        let blinkTimeout;
-        let blinkValue = 0;
-
-        let blink = function () {
-            blinkValue ^= 1;
-            pin2.writeDigital(blinkValue);
-            blinkValue ^= 1;
-            pin3.writeDigital(blinkValue);
-            blinkValue ^= 1;
-            blinkTimeout = setTimeout(blink, 500);
-        }
-        blink();
-        */
-
         wm.WashingProgramHistory.init();
         wm.WashingProgram.init();
         wm.WashingApi.init();
         
         let statusText = document.getElementById('status-text'),
             durationCircle = document.getElementById('duration-circle'),
-            duration = document.getElementById('duration');
+            durationText = document.getElementById('duration-text'),
+            durationHoursLeft = document.getElementById('duration-hours-left'),
+            durationMinutesLeft = document.getElementById('duration-minutes-left'),
+            durationLeftLabel = document.getElementById('duration-left-label');
         
         durationCircle.style.strokeDasharray = Math.PI * parseInt(durationCircle.getAttribute('r'), 10) * 2;
         durationCircle.style.strokeDashoffset = durationCircle.style.strokeDasharray;
@@ -56,7 +41,6 @@ window.addEventListener('ready', () => {
             } else {
                 statusText.textContent = 'ready';
                 durationCircle.style.strokeDashoffset = 0;
-                //duration.hidden = false;
             }
         });
         
@@ -72,14 +56,35 @@ window.addEventListener('ready', () => {
             }, 50);
         });
         
+        let blinkTimeout;
+        let blinkValue = 0;
+        let blink = function () {
+            clearTimeout(blinkTimeout);
+            blinkValue ^= 1;
+            pin3.writeDigital(blinkValue);
+            blinkTimeout = setTimeout(blink, 500);
+        }
+        
+        wm.WashingProgram.addEventListener('start', function (e) {
+            statusText.textContent = '';
+            durationText.hidden = false;
+            durationLeftLabel.hidden = false;
+            blink();
+        });
+        
+        wm.WashingProgram.addEventListener('stop', function (e) {
+            statusText.textContent = 'idle';
+            durationText.hidden = true;
+            durationLeftLabel.hidden = true;
+            durationCircle.style.strokeDashoffset = 0;
+            clearTimeout(blinkTimeout);
+        });
+        
         wm.WashingProgram.addEventListener('timer-tick', function (e) {
             durationCircle.style.strokeDashoffset = (durationCircle.style.strokeDasharray / 120) * e.minutesLeft;
-            statusText.textContent = '';
-            /*
-            durationHoursLeft.textContent = Math.floor(minutesLeft / 60);
-            let minutes = minutesLeft - Math.floor(minutesLeft / 60) * 60;
+            durationHoursLeft.textContent = Math.floor(e.minutesLeft / 60);
+            let minutes = e.minutesLeft - Math.floor(e.minutesLeft / 60) * 60;
             durationMinutesLeft.textContent = minutes < 10 ? '0' + minutes : minutes;
-            */
         });
         
     });
