@@ -1,4 +1,4 @@
-# Work in progress
+# Work in progress ![washing machine](https://raw.githubusercontent.com/SunboX/fxos-washing-machine_app/master/img/icons/icon48x48.png) 
 
 ## TODO
 
