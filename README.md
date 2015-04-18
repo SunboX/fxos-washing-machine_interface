@@ -77,6 +77,12 @@ http://home.howstuffworks.com/appliances/energy-efficient/how-do-washing-machine
 
 The water hardness indicates the amount of existing lime, calcium and magnesium in the water. The higher the percentage, the higher the degree of water hardness. Scale to build up in the machine, but also to the laundry and decrease by blockade of surfactants in detergent washing performance. Therefore, the dose of detergent depends on the degree of water hardness, the harder the water, the more detergent must be dosed to achieve the same cleaning effect. In softer water can be less dose, thus protects the environment by reducing consumption of detergent and additional descaler and also saves money.
 
+Component detergents usually consist of three essential components of a heavy-duty detergent, the components are sold separately in a bag or box.
+The softener ensures the adaptation to the local water hardness.
+The basic detergent without bleach corresponds to a mild detergent and is dosed according to the degree of soiling.
+The bleaching agent (or: stain remover) is added only if heavily soiled laundry and bleachable. It makes the base powder a full laundry soap.
+These funds are supplemented by additional available special stain remover, which are usually used before washing and working in part on the basis of added in conventional detergent enzymes - if allergies do not tolerate, it can therefore be omitted in a modular system.
+
 ### Auto dose of detergents
 
 //TODO
