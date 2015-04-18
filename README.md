@@ -76,3 +76,7 @@ http://home.howstuffworks.com/appliances/energy-efficient/how-do-washing-machine
 ### Washing Powder & Fabric Conditioner API
 
 The water hardness indicates the amount of existing lime, calcium and magnesium in the water. The higher the percentage, the higher the degree of water hardness. Scale to build up in the machine, but also to the laundry and decrease by blockade of surfactants in detergent washing performance. Therefore, the dose of detergent depends on the degree of water hardness, the harder the water, the more detergent must be dosed to achieve the same cleaning effect. In softer water can be less dose, thus protects the environment by reducing consumption of detergent and additional descaler and also saves money.
+
+### Auto dose of detergents
+
+//TODO
