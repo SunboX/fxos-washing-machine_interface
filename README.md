@@ -4,9 +4,11 @@
 
 ## TODO
 
+* Add touch interface support
 * Managing connected Devices
   * Add / Commit an Access Token
   * Remove a Connection
+* Implement same washing machine control possibilities like the app provides
 
 Authentication of new Devices will be initialized by scanning a QR-Code from the Washing Machine Interface.
 This Code contains the IP-Address of the Washing Machine and a Access Token for the new App.
